@@ -7,7 +7,7 @@ $resul = mysqli_query($conn, $sql);
  $result = mysqli_query($conn, $sql);
 
 
-$sql = "SELECT * FROM propertytypes";
+$sql= "SELECT * FROM propertytypes";
 $results = mysqli_query($conn, $sql);
 
 $sql = "SELECT * FROM propertiess";
