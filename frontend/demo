@@ -1,0 +1,252 @@
+SELECT * FROM propertiess WHERE type='2' AND propertytype='2' AND location LIKE '%bathery%' AND budget like '%11000%';
+<?php
+echo  $sql = "SELECT * FROM `propertiess` INNER JOIN types ON propertiess.type=types.id INNER JOIN amenities ON propertiess.propertyid=amenities.id_amen $Where";
+$Results = mysqli_query($conn, $sql);
+if (mysqli_num_rows($Results) > 0) {
+  $cnt = 0;
+  foreach ($Results as $Row) {
+    $cnt++;
+include '../backend/connection.php';
+$msg = "";
+if (isset($_POST['submit'])) {
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+
+    $sql = "INSERT INTO `subscribes`(`subscribers`) VALUES ('$email')";
+    $resultss = mysqli_query($conn, $sql);
+    if ($resultss) {
+
+        $msg = "Your E-mail Added Successfully, We Will Contact Soon";
+    }
+}
+$sql1 = "SELECT * FROM `blogs`";
+$blog1 = mysqli_query($conn, $sql1);
+$count =  mysqli_num_rows($blog1);
+
+$limit = 4;
+if (isset($_GET["page"])) {
+    $page  = $_GET["page"];
+    if ($page == 0)
+        $page = 1;
+} else {
+    $page = 1;
+}
+
+$record_index = ($page - 1) * $limit;
+$whr = "";
+if (isset($_POST['search'])) {
+    $sarch = $_POST['searchTitle'];
+    $whr  = "where title like '%" . $sarch . "%'";
+}
+
+$sql = "SELECT * FROM `blogs` " . $whr . " limit $record_index,$limit";
+$blog = mysqli_query($conn, $sql);
+$count = mysqli_num_rows($blog);
+?>
+<!DOCTYPE html>
+<html lang="zxx">
+
+<head>
+    <?php
+    include 'head.php';
+    ?>
+</head>
+
+<body class="defult-home">
+
+    <div class="offwrap"></div>
+
+    <?php
+    include 'header.php';
+    ?>
+    <!-- Banner Section Start -->
+
+    <!-- Banner Section End -->
+    <section class="page-header22">
+        <img src="images/page-header-bg.jpg">
+        <div class="headings">
+            <h3>Latest News</h3>
+            <ul>
+                <li><a href="index.php">Home</a></li>
+                <li>-</li>
+                <li>Blog</li>
+            </ul>
+        </div>
+    </section>
+
+    <div class="rs-inner-blog pt-100 pb-100 md-pt-70 md-pb-70" style="margin-top: 7%;">
+        <div class="container custom">
+            <div class="row">
+
+                <div class="col-md-8">
+                    <?php
+                    $cnt = 0;
+
+                    foreach ($blog as $rows) {
+                        $cnt++;
+                        if ($cnt == 1) {
+                    ?>
+
+                            <div class="col-lg-6 pr-35 md-pr-15 md-mt-50">
+
+                                <div class="row">
+                                <?php } ?>
+
+                                <div class="col-lg-12 mb-50">
+
+                                    <div class="blog-item">
+                                        <div class="blog-img">
+                                            <a href=""><img src="../backend/uploads/<?php echo $rows['blogimg']; ?>" alt=""></a>
+
+                                        </div>
+                                        <div class="blog-content">
+                                            <h3 class="blog-title"><a href=""><?php echo $rows['title']; ?></a>
+                                            </h3>
+                                            <div class="blog-meta">
+                                                <ul class="btm-cate">
+                                                    <li>
+                                                        <div class="blog-date">
+                                                            <i class="fa fa-calendar-check-o"></i></i><?php echo $rows['date']; ?>
+                                                        </div>
+                                                    </li>
+                                                    <li>
+                                                        <div class="author">
+                                                            <i class="fa fa-user-o"></i> <?php echo $rows['author']; ?>
+                                                        </div>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            <div class="blog-desc">
+                                                <?php echo $rows['description']; ?>
+                                            </div>
+                                            <div class="blog-button">
+                                                <a class="blog-btn" href="blog-details.php?id=<?php echo $rows['id'] ?>">Continue Reading <i class="fa-solid fa-arrow-right"></i></a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <?php if ($cnt == 2 || $count == 1 || $count == 3) { ?>
+                                </div>
+                            </div>
+
+                    <?php $cnt = 0;
+                                }
+                            }
+                    ?>
+                    <div class="col-lg-6 pr-35 md-pr-15 md-mt-50">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="pagination-area">
+                                    <div class="nav-link">
+                                        <a class="page-number border-none" href="blog.php?page=<?php echo $page - 1 ?>">Pre</a>
+                                        <?php
+                                        $sql = "SELECT COUNT(*) FROM `blogs` " . $whr;
+                                        $retval1 = mysqli_query($conn, $sql);
+                                        $row = mysqli_fetch_row($retval1);
+                                        $total_records = $row[0];
+                                        $total_pages = ceil($total_records / $limit);
+                                        $cnt = $count % 4;
+                                        for ($i = 1; $i <= $total_pages; $i++) { ?>
+                                            <a class="page-number" href="blog.php?page=<?php echo $i ?>"><?php echo $i; ?></a>
+                                        <?php } ?>
+                                        <?php if ($total_pages <= $page) {
+                                        } else { ?>
+                                            <a class="page-number border-none" href="blog.php?page=<?php echo $page + 1 ?>">Next</a>
+                                        <?php } ?>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-4">
+                    <div class="col-lg-12 col-md-12 order-last" style="  margin-top: 1%;">
+                        <div class="widget-area">
+                            <div class="search-widget mb-50">
+                                <form action="" method="post">
+                                    <div class="search-wrap">
+                                        <input type="search" placeholder="Searching..." name="searchTitle" class="search-input" value="">
+                                        <button type="submit" name="search" value="Search"><i class="fa-solid fa-magnifying-glass"></i></button>
+                                    </div>
+                                </form>
+                            </div>
+                            <?php
+                            $sqli = "SELECT * FROM blogs ORDER BY  blogs.id DESC limit 3 ";
+                            $RESULT = mysqli_query($conn, $sqli);
+                            ?>
+                            <div class="recent-posts mb-50">
+                                <div class="widget-title">
+                                    <h3 class="title">Recent Posts</h3>
+                                </div>
+                                <?php
+
+                                if (mysqli_num_rows($RESULT) > 0) {
+
+                                    foreach ($RESULT as $Row) {
+                                ?>
+                                        <div class="recent-post-widget no-border">
+                                            <div class="post-img">
+                                                <a href=""><img src="../backend/uploads/<?php echo $Row['blogimg']; ?>" alt=""></a>
+                                            </div>
+                                            <div class="post-desc">
+                                                <a href=""><?php echo $Row['title']; ?></a>
+                                                <span class="date-post"> <i class="fa fa-calendar"></i><?php echo $Row['date']; ?></span>
+                                            </div>
+                                        </div>
+                                <?Php
+                                    }
+                                } ?>
+
+                            </div>
+                            <div class="categories">
+                                <div class="widget-title">
+                                    <h3 class="title">Pro Services</h3>
+                                </div>
+                                <ul class="sub-menu">
+                                    <?php
+                                    $sqls = "SELECT  * FROM `subservices` where service=9";
+                                    $results = mysqli_query($conn, $sqls);
+                                    foreach ($results as $rows) {
+                                    ?>
+                                        <li><a href="service.php?id=<?php echo $rows['id_sub'] ?>" class="hash"><?php echo $rows['text']; ?></a></li>
+
+                                    <?php } ?>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+
+            </div>
+        </div>
+    </div>
+    <!-- Testimonial Section Start -->
+
+    <!-- Contact Section Start -->
+    <?php
+    include 'subscribe.php';
+    ?>
+    <!-- Contact Section End -->
+
+
+    </div>
+    <!-- Main content End -->
+
+    <!-- Footer Start -->
+    <?php
+    include 'footer.php';
+    ?>
+    <!-- Footer End -->
+
+    <!-- start scrollUp  -->
+    <?php
+    include 'script.php';
+    ?>
+
+</body>
+<grammarly-desktop-integration data-grammarly-shadow-root="true"></grammarly-desktop-integration>
+
+</html>
