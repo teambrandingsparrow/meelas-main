@@ -6,7 +6,7 @@ $proper = mysqli_query($conn, $sql1);
 $row =  mysqli_num_rows($proper);
 
 
-// $whr = "";
+// $whr  = "";
 if (isset($_POST['search'])) {
 
     $type = $_POST['searchType'];
